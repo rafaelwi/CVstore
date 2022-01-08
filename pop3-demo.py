@@ -4,14 +4,16 @@ import yaml
 def P(a): print(a)
 
 # Read from yaml
+# Note for gmail, you may want to use `recent:myemailhere@gmail.com` to get all
+# messages from the last month
 try:
-    with open('secrets/pop3-demo-config.yaml') as f:
+    with open('secrets/email.yaml') as f:
         y = yaml.safe_load(f)
         HOST = y['host']
         USER = y['user']
         PASS = y['pass']
 except:
-    P('Missing file "secrets/pop3-demo-config.yaml"!')
+    P('Missing file "secrets/email.yaml"!')
     P('Please create the file with fields:')
     P('host: pop.email.server.com')
     P('user: my@email.com')
