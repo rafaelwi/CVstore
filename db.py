@@ -1,11 +1,6 @@
 import psycopg2
 from config import config
 
-
-
-
-
-
 def setup():
     print ("Setting up the database...")
     commands = (
@@ -60,6 +55,6 @@ def setup():
     finally:
         if conn is not None:
             conn.close()
-   
 
-setup()
+
+
