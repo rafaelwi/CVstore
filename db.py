@@ -1,18 +1,13 @@
 import psycopg2
-conn = psycopg2.connect(
-    host="localhost",
-    database="jobs",
-    user="postgres",
-    password="password",
-    port="42069")
-cur = conn.cursor()
-cur.execute('SELECT version()')
+from config import config
 
-# display the PostgreSQL database server version
-db_version = cur.fetchone()
-print(db_version)
+
+
+
+
 
 def setup():
+    print ("Setting up the database...")
     commands = (
         """ CREATE TABLE IF NOT EXISTS company (
                 company_id integer PRIMARY KEY,
@@ -28,20 +23,43 @@ def setup():
             salary integer,
             CONSTRAINT fk_company
                 FOREIGN KEY(company_id) 
-	            REFERENCES company(customer_id)
+	            REFERENCES company(company_id)
         )
         """,
         """ CREATE TABLE IF NOT EXISTS job_application (
                 app_id integer PRIMARY KEY,
-                company_id VARCHAR(255) NOT NULL,
+                company_id integer,
                 job_id integer,
                     CONSTRAINT fk_company
                     FOREIGN KEY(company_id) 
-	                REFERENCES company(customer_id),
+	                REFERENCES company(company_id),
                     CONSTRAINT fk_job
                     FOREIGN KEY(job_id) 
 	                REFERENCES jobs(job_id)
                 )
         """)
+    conn = None
+   
+    try:
+        # read the connection parameters
+        params = config()
+        # connect to the PostgreSQL server
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+        # create table one by one
+        for command in commands:
+            cur.execute(command)
+        # close communication with the PostgreSQL database server
+        cur.close()
+        # commit the changes
+        conn.commit()
+        print ("Done!")
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+       
+    finally:
+        if conn is not None:
+            conn.close()
+   
 
-def insert_job_data(id,author_id)
+setup()
