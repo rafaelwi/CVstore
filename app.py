@@ -1,9 +1,9 @@
 from flask import Flask, render_template
-from db import setup_db , insert_company, insert_job,edit_job,remove_job
+from db import setup_db , insert_company, insert_job,edit_job,remove_job,remove_company
 app = Flask(__name__)
 
 setup_db()
-remove_job(1)
+insert_company("Wigger")
 @app.route('/')
 def hello():
     return 'Hello, World!'
