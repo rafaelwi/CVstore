@@ -1,0 +1,19 @@
+{
+    "name": "Hack The Job",
+    "description": "Scott and Rafael's entry for Hack the Job 2022",
+    "version": "1.0",
+    "manifest_version": 3,
+    "background": {
+        "service_worker": "background.js"
+    },
+    "options_page": "/html/options.html",
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "contextMenus",
+        "storage"
+    ],
+    "action": {
+        "default_popup": "/html/popup.html"
+    }
+}
