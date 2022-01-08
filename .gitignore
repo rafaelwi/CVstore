@@ -1,1 +1,3 @@
 .DS_Store
+database.ini
+__pycache__/*
