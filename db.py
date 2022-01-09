@@ -172,15 +172,13 @@ def remove_company(company_id):
     finally:
         if conn is not None:
             conn.close()
-
-
 def get_job_apps():
     conn = None
     try:
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("SELECT status_text,b.status_id,job_title,company_name,status_text,salary FROM job as \"b\" cross join company as \"c\" cross join status as \"d\" where b.company_id = c.company_id and b.status_id = d.status_id and active = 1; ")
+        cur.execute("SELECT status_text,b.status_id,job_title,company_name,status_text,salary,job_id FROM job as \"b\" cross join company as \"c\" cross join status as \"d\" where b.company_id = c.company_id and b.status_id = d.status_id and active = 1; ")
         rows = [dict((cur.description[i][0], value) \
                for i, value in enumerate(row)) for row in cur.fetchall()]
         cur.close()
@@ -190,8 +188,6 @@ def get_job_apps():
         if conn is not None:
             conn.close()
     return rows
-
-
 def get_companies():
     conn = None
     try:
@@ -208,9 +204,6 @@ def get_companies():
         if conn is not None:
             conn.close()
     return rows
-
-
-
 def update_job_status(job_id,status_id):
     sql = """UPDATE job SET status_id = %s where job_id = %s;"""
     try:

@@ -50,3 +50,10 @@ def remove_company_endpoint():
     remove_company(data['company_id'])
     return 'Company removed'
 
+@app.route('/api/insert_company' , methods = ['POST'])
+def insert_company_endpoint():
+    data = request.form
+    insert_company(data['company_name'])
+    return 'Company added'
+
+
