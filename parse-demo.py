@@ -1,7 +1,11 @@
+from os import read
 import poplib
 import yaml
 from email.parser import Parser
 from string import punctuation
+from thefuzz import fuzz
+from thefuzz import process
+
 
 def P(a): print(a)
 
@@ -33,7 +37,9 @@ def parse(msg):
     ]
 
     applying = [
-        "applying"
+        "applying",
+        "application",
+        "interest in",
     ]
 
     rejection = [
@@ -58,20 +64,15 @@ def parse(msg):
 
     roles = parse_data(role, m, 'roles')
     companies = parse_data(company, m, 'companies')
+    ratios = {}
+    ratios['applying'] = parse_status(applying, m, 'applying')
+    ratios['rejection'] = parse_status(rejection, m, 'rejection')
+    ratios['interview'] = parse_status(interview, m, 'interview')
+    ratios['oa'] = parse_status(oa, m, 'oa')
+    ratios['acceptance'] = parse_status(acceptance, m, 'acceptance')
+    ratios = dict(sorted(ratios.items(), key=lambda item: item[1], reverse=True))
+    P(ratios)
 
-def parse_role_debug(roles, msg):
-    for role in roles:
-        i = msg.find(role)
-        P(f'"{role}" => {i}')
-        if i > -1:
-            job = ''
-            for x in range(i+len(role), len(msg)):
-                if msg[x] not in punctuation:
-                    job += msg[x]
-                else: break
-            P(f'Job: {job}')
-
-        P('\n')
 
 def parse_data(data, msg, tag):
     data_found = []
@@ -86,12 +87,15 @@ def parse_data(data, msg, tag):
             # Cleanup
             new_role = new_role.replace('To', '').replace('the', '')
             new_role = new_role.strip()
-
             if new_role != '': data_found.append(new_role)
+
     P(f'Found the following {tag}:')
     for i in data_found: P(f'    "{i}"')
-    P('')
     return data_found
+
+
+def parse_status(stat, msg, tag=None):
+    return sum(fuzz.partial_ratio(msg,i) for i in stat) / len(stat)
 
 
 # Read from yaml
