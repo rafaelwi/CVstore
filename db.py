@@ -19,6 +19,7 @@ def setup_db():
             job_title VARCHAR(255),
             application_url VARCHAR(1024),
             salary integer,
+            active integer,
             CONSTRAINT fk_company
                 FOREIGN KEY(company_id) 
 	            REFERENCES company(company_id)
@@ -70,7 +71,7 @@ def setup_db():
 
 def insert_job(job_title,application_url,salary,company_id):
     conn = None
-    sql = """INSERT INTO job (job_title,application_url,salary,company_id) VALUES (%s,%s,%s,%s);"""
+    sql = """INSERT INTO job (job_title,application_url,salary,company_id,active) VALUES (%s,%s,%s,%s,1);"""
     try:
         # read the connection parameters
         params = config()
@@ -114,7 +115,7 @@ def edit_job( job_title,application_url,salary,company_id,job_id):
             conn.close()
 def remove_job (job_id):
     conn = None
-    sql = """DELETE FROM job WHERE job_id = %s;"""
+    sql = """UPDATE job SET active = 0 where job_id = %s;"""
     try:
         # read the connection parameters
         params = config()
@@ -223,7 +224,7 @@ def get_job_apps():
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("SELECT app_id,status_text,a.status_id,job_title,company_name,status_text FROM job_application as \"a\" cross join job as \"b\" cross join company as \"c\" cross join status as \"d\" where a.job_id = b.job_id and b.company_id = c.company_id and a.status_id = d.status_id ; ")
+        cur.execute("SELECT app_id,status_text,a.status_id,job_title,company_name,status_text FROM job_application as \"a\" cross join job as \"b\" cross join company as \"c\" cross join status as \"d\" where a.job_id = b.job_id and b.company_id = c.company_id and a.status_id = d.status_id and active = 1; ")
         rows = [dict((cur.description[i][0], value) \
                for i, value in enumerate(row)) for row in cur.fetchall()]
         cur.close()
@@ -247,9 +248,10 @@ def update_job_app_status(job_id,status_id):
         cur.close()
         # commit the changes
         conn.commit()
-        print ("Done!")
+        print ("Done")
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
     finally:
         if conn is not None:
             conn.close()
+
