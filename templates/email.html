@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Setup Email</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/email.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body>
+    <div class="pure-g">
+      <div class="pure-u-1-3" height="33%"></div>
+      <div class="pure-u-1-3" height="33%"></div>
+      <div class="pure-u-1-3" height="33%"></div>
+    </div>
+    <div class="pure-g">
+      <div class="pure-u-1-3"></div>
+      <div class="pure-u-1-3">
+        <form class="pure-form pure-form-aligned" action="{{ url_for('pop3_connect') }}" method="post">
+          <fieldset>
+            <div class="pure-control-group">
+              <label for="aligned-name">Email</label>
+              <input type="email" type="text" name="email" id="aligned-name" placeholder="your@email.com" value="hackthejob@gmx.com"/>
+            </div>
+            <div class="pure-control-group">
+              <label for="aligned-password">Password</label>
+              <input type="password" name="password" id="aligned-password" placeholder="‧‧‧‧‧‧‧‧" value="zYeuHcyqFTY7Xs9" />
+            </div>
+            <div class="pure-control-group">
+              <label for="aligned-email">POP Server</label>
+              <input name="host" id="aligned-email" placeholder="pop.email.com" value="pop.gmx.com"/>
+            </div>
+            <div class="pure-controls">
+              <button type="submit" class="pure-button pure-button-primary" onclick="document.getElementById('load').style.display='block'">
+                Submit  <i id="load" class="fa fa-circle-o-notch fa-spin" color="#fff" style="display: none;"></i>
+              </button>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <div class="pure-u-1-3"></div>
+    </div>
+    <div class="pure-g">
+      <div class="pure-u-1-3" height="33%"></div>
+      <div class="pure-u-1-3" height="33%"></div>
+      <div class="pure-u-1-3" height="33%"></div>
+    </div>
+  </body>
+</html>
