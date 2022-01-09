@@ -33,7 +33,19 @@ def setup_db():
 	                REFERENCES job(job_id)
 
                 )
-        """)
+        """,
+        """ CREATE TABLE IF NOT EXISTS status (
+                status_id integer PRIMARY KEY,
+                status_text varchar(64)
+                )
+        """,
+        """INSERT INTO status (status_id,status_text) VALUES (1, 'None')""",
+        """INSERT INTO status (status_id,status_text) VALUES (2, 'Applied')""",
+        """INSERT INTO status (status_id,status_text) VALUES (3, 'Applied stale')""",
+        """INSERT INTO status (status_id,status_text) VALUES (4, 'Interview upcoming')""",
+        """INSERT INTO status (status_id,status_text) VALUES (5, 'Interview process in progress')""",
+        """INSERT INTO status (status_id,status_text) VALUES (6, 'OA')""",
+        """INSERT INTO status (status_id,status_text) VALUES (7, 'Rejected')""")
     conn = None
     try:
         # read the connection parameters
@@ -182,8 +194,8 @@ def insert_job_app(job_id,status_id):
     finally:
         if conn is not None:
             conn.close()
-
 def remove_job_app(job_id):
+
     conn = None
     sql = """DELETE FROM job_application WHERE app_id = %s;"""
     try:
@@ -204,3 +216,22 @@ def remove_job_app(job_id):
     finally:
         if conn is not None:
             conn.close()
+
+def get_job_apps():
+    conn = None
+    try:
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+        cur.execute("SELECT app_id,status_text,a.status_id,job_title,company_name FROM job_application as \"a\" cross join job as \"b\" cross join company as \"c\" cross join status as \"d\" where a.job_id = b.job_id and b.company_id = c.company_id and a.status_id = d.status_id ; ")
+        rows = cur.fetchall()
+        print("The number of parts: ", cur.rowcount)
+        for row in rows:
+            print(row)
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+    return rows
