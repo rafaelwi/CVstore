@@ -59,11 +59,22 @@ def pop3_connect():
                     for c in companies:
                         if c['company_name'] == newmsg['companies']:
                             cono = c['company_id']
-                    print(cono)
                     insert_job(newmsg['roles'], 'https://', 1, cono)
+                    # # messages.append(newmsg)
                     # messages.append(newmsg)
+    raw_meme = get_job_apps()
+    used = set()
+    meme = []
+    for a in raw_meme:
+        if a['job_title'] not in used:
+            used.add(a['job_title'])
+            meme.append(a)
 
-    return render_template('job.html', jobs=messages)
+    # print(meme)
+
+    # return render_template('job.html', jobs=messages , jobs2=meme)
+    return render_template('job.html', jobs2=meme)
+
 
 
 @app.route('/api/get_job_apps')
