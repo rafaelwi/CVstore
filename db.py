@@ -35,7 +35,6 @@ def setup_db():
                 )
         """)
     conn = None
-   
     try:
         # read the connection parameters
         params = config()
@@ -185,6 +184,7 @@ def insert_job_app(job_id,status_id):
             conn.close()
 
 def remove_job_app(job_id):
+    conn = None
     sql = """DELETE FROM job_application WHERE app_id = %s;"""
     try:
         # read the connection parameters
