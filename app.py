@@ -41,20 +41,16 @@ def pop3_connect():
         - POP3 has not been enabled for your email<br>
         - Gmail: Enable "Less secure app access" at https://myaccount.google.com/lesssecureapps
         """
-    messages=''
-    for n in range(conn.stat()[0], 0, -1):
-        messages += f'Message #{n}<br>'
+    messages=[]
+    for n in range(1,conn.stat()[0]+1):
         msg = Parser().parsestr(b"\r\n".join(conn.retr(n)[1]).decode('utf-8'))
-        messages += f'   Date: {msg.get("Date")}<br>'
-        messages += f'   From: {msg.get("From")}<br>'
-        messages += f'Subject: {msg.get("Subject")}<br>'
-
         payload = msg.get_payload()
         if isinstance(payload, list):
             for i, p in enumerate(payload):
                 if 'plain' in p['Content-Type']:
-                    messages += parse(p.as_string())
+                    messages.append(parse(p.as_string()))
 
+    # for i in messages:
 
 
     return f"""

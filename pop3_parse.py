@@ -62,7 +62,8 @@ def parse(msg):
     ratios['oa'] = parse_status(oa, m, 'oa')
     ratios['acceptance'] = parse_status(acceptance, m, 'acceptance')
     ratios = dict(sorted(ratios.items(), key=lambda item: item[1], reverse=True))
-    return f"Roles: {roles}<br>Companies: {companies}<br>Ratios: {ratios}<br><hr>"
+    obj = {'roles':roles, 'companies':companies, 'ratios':ratios, 'message':m}
+    return obj
 
 
 
