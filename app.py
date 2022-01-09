@@ -52,15 +52,12 @@ def pop3_connect():
         if isinstance(payload, list):
             for i, p in enumerate(payload):
                 if 'plain' in p['Content-Type']:
-                    messages.append(parse(p.as_string()))
+                    newmsg = parse(p.as_string())
+                    newmsg['date'] = msg.get('Date')
+                    messages.append(newmsg)
 
-    # for i in messages:
-    return f"""
-        Connected user "{USER}" (Password: {"*"*len(PASS)}) to "{HOST}"<br>
-        Inbox stats: {conn.stat()[0]} messages, {conn.stat()[1]} bytes<br><br>
-        Messages:<br>
-        {messages}
-    """
+    return render_template('job.html', jobs=messages)
+
 
 @app.route('/api/get_job_apps')
 def get_job_apps_endpoint():

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Your Jobs</title>
+        <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
+    </head>
+    <body>
+        <h1>YOUR JOBS</h1>
+        <table>
+            <tr>
+                <th>Company</th>
+                <th>Role</th>
+                <th>Email Type</th>
+                <th>Last Updated</th>
+            </tr>
+            {% for i in jobs %}
+            <tr>
+                <td>{{i['companies']}}</td>
+                <td>{{i['roles']}}</td>
+                <td>{{i['ratios']}}</td>
+                <td>{{i['date']}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
