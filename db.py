@@ -223,7 +223,7 @@ def get_job_apps():
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("SELECT app_id,status_text,a.status_id,job_title,company_name FROM job_application as \"a\" cross join job as \"b\" cross join company as \"c\" cross join status as \"d\" where a.job_id = b.job_id and b.company_id = c.company_id and a.status_id = d.status_id ; ")
+        cur.execute("SELECT app_id,status_text,a.status_id,job_title,company_name,salary FROM job_application as \"a\" cross join job as \"b\" cross join company as \"c\" cross join status as \"d\" where a.job_id = b.job_id and b.company_id = c.company_id and a.status_id = d.status_id ; ")
         rows = cur.fetchall()
         print("The number of parts: ", cur.rowcount)
         for row in rows:
@@ -235,3 +235,23 @@ def get_job_apps():
         if conn is not None:
             conn.close()
     return rows
+def update_job_app_status(job_id,status_id):
+    sql = """UPDATE job_application SET status_id = %s where job_id = %s;"""
+    try:
+        # read the connection parameters
+        params = config()
+        # connect to the PostgreSQL server
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+        # create table one by one
+        cur.execute(sql, (status_id,job_id))
+        # close communication with the PostgreSQL database server
+        cur.close()
+        # commit the changes
+        conn.commit()
+        print ("Done!")
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
