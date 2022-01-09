@@ -1,5 +1,8 @@
 env/**
 *.txt
+.DS_Store
+database.ini
+__pycache__/*
 
 # Shh, secret
 *.yaml
