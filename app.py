@@ -20,6 +20,7 @@ def about():
 
 @app.route('/api/get_job_apps')
 def get_job_apps_endpoint():
+    print(get_job_apps())
     return json.dumps(get_job_apps())
 
 @app.route('/api/update_job_app_status', methods = ['POST'])

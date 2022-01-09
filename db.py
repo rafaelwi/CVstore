@@ -223,11 +223,9 @@ def get_job_apps():
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("SELECT app_id,status_text,a.status_id,job_title,company_name,salary FROM job_application as \"a\" cross join job as \"b\" cross join company as \"c\" cross join status as \"d\" where a.job_id = b.job_id and b.company_id = c.company_id and a.status_id = d.status_id ; ")
-        rows = cur.fetchall()
-        print("The number of parts: ", cur.rowcount)
-        for row in rows:
-            print(row)
+        cur.execute("SELECT app_id,status_text,a.status_id,job_title,company_name,status_text FROM job_application as \"a\" cross join job as \"b\" cross join company as \"c\" cross join status as \"d\" where a.job_id = b.job_id and b.company_id = c.company_id and a.status_id = d.status_id ; ")
+        rows = [dict((cur.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cur.fetchall()]
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
