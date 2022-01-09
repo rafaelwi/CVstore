@@ -20,21 +20,13 @@ def setup_db():
             application_url VARCHAR(1024),
             salary integer,
             active integer,
+            status_id integer,
             CONSTRAINT fk_company
                 FOREIGN KEY(company_id) 
 	            REFERENCES company(company_id)
         )
         """,
-        """ CREATE TABLE IF NOT EXISTS job_application (
-                app_id integer PRIMARY KEY DEFAULT nextval('job_application_id_seq'),
-                status_id integer,
-                job_id integer,
-                    CONSTRAINT fk_job
-                    FOREIGN KEY(job_id) 
-	                REFERENCES job(job_id)
-
-                )
-        """,
+        
         """ CREATE TABLE IF NOT EXISTS status (
                 status_id integer PRIMARY KEY,
                 status_text varchar(64)
@@ -71,8 +63,9 @@ def setup_db():
 
 def insert_job(job_title,application_url,salary,company_id):
     conn = None
-    sql = """INSERT INTO job (job_title,application_url,salary,company_id,active) VALUES (%s,%s,%s,%s,1);"""
+    sql = """INSERT INTO job (job_title,application_url,salary,company_id,active,status_id) VALUES (%s,%s,%s,%s,1,1);"""
     try:
+        
         # read the connection parameters
         params = config()
         # connect to the PostgreSQL server
@@ -84,7 +77,8 @@ def insert_job(job_title,application_url,salary,company_id):
         cur.close()
         # commit the changes
         conn.commit()
-        print ("Done!")
+        
+        print ("fff")
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
        
@@ -156,6 +150,7 @@ def insert_company(company_name):
 def remove_company(company_id):
     conn = None
     sql = """DELETE FROM company WHERE company_id = %s;"""
+    sql2 = """DELETE FROM job where company_id = %s;"""
     try:
         # read the connection parameters
         params = config()
@@ -163,7 +158,9 @@ def remove_company(company_id):
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
         # create table one by one
+        cur.execute(sql2, (company_id,))
         cur.execute(sql, (company_id,))
+        
         # close communication with the PostgreSQL database server
         cur.close()
         # commit the changes
@@ -175,48 +172,7 @@ def remove_company(company_id):
     finally:
         if conn is not None:
             conn.close()
-def insert_job_app(job_id,status_id):
-    sql = """INSERT INTO job_application (job_id,status_id) VALUES (%s,%s);"""
-    try:
-        # read the connection parameters
-        params = config()
-        # connect to the PostgreSQL server
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        # create table one by one
-        cur.execute(sql, (job_id,status_id))
-        # close communication with the PostgreSQL database server
-        cur.close()
-        # commit the changes
-        conn.commit()
-        print ("Done!")
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-def remove_job_app(job_id):
 
-    conn = None
-    sql = """DELETE FROM job_application WHERE app_id = %s;"""
-    try:
-        # read the connection parameters
-        params = config()
-        # connect to the PostgreSQL server
-        conn = psycopg2.connect(**params)
-        cur = conn.cursor()
-        # create table one by one
-        cur.execute(sql, (job_id,))
-        # close communication with the PostgreSQL database server
-        cur.close()
-        # commit the changes
-        conn.commit()
-        print ("Done!")
-    except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
-    finally:
-        if conn is not None:
-            conn.close()
 
 def get_job_apps():
     conn = None
@@ -224,7 +180,7 @@ def get_job_apps():
         params = config()
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
-        cur.execute("SELECT app_id,status_text,a.status_id,job_title,company_name,status_text FROM job_application as \"a\" cross join job as \"b\" cross join company as \"c\" cross join status as \"d\" where a.job_id = b.job_id and b.company_id = c.company_id and a.status_id = d.status_id and active = 1; ")
+        cur.execute("SELECT status_text,b.status_id,job_title,company_name,status_text,salary FROM job as \"b\" cross join company as \"c\" cross join status as \"d\" where b.company_id = c.company_id and b.status_id = d.status_id and active = 1; ")
         rows = [dict((cur.description[i][0], value) \
                for i, value in enumerate(row)) for row in cur.fetchall()]
         cur.close()
@@ -234,8 +190,29 @@ def get_job_apps():
         if conn is not None:
             conn.close()
     return rows
-def update_job_app_status(job_id,status_id):
-    sql = """UPDATE job_application SET status_id = %s where job_id = %s;"""
+
+
+def get_companies():
+    conn = None
+    try:
+        params = config()
+        conn = psycopg2.connect(**params)
+        cur = conn.cursor()
+        cur.execute("select * from company;")
+        rows = [dict((cur.description[i][0], value) \
+               for i, value in enumerate(row)) for row in cur.fetchall()]
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        if conn is not None:
+            conn.close()
+    return rows
+
+
+
+def update_job_status(job_id,status_id):
+    sql = """UPDATE job SET status_id = %s where job_id = %s;"""
     try:
         # read the connection parameters
         params = config()
