@@ -22,5 +22,11 @@
             </tr>
             {% endfor %}
         </table>
+
+        <form action="/api/insert_company" method="post">
+            <label for="company_lbl">Company:</label>
+            <input type="text" id="comapny" name="company_name"><br><br>
+            <input type="submit" value="Submit">
+        </form>
     </body>
 </html>

@@ -54,7 +54,14 @@ def pop3_connect():
                 if 'plain' in p['Content-Type']:
                     newmsg = parse(p.as_string())
                     newmsg['date'] = msg.get('Date')
-                    messages.append(newmsg)
+                    insert_company(newmsg['companies'])
+                    companies = get_companies()
+                    for c in companies:
+                        if c['company_name'] == newmsg['companies']:
+                            cono = c['company_id']
+                    print(cono)
+                    insert_job(newmsg['roles'], 'https://', 1, cono)
+                    # messages.append(newmsg)
 
     return render_template('job.html', jobs=messages)
 
