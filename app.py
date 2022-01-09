@@ -55,8 +55,11 @@ def pop3_connect():
                     newmsg = parse(p.as_string())
                     newmsg['date'] = msg.get('Date')
                     messages.append(newmsg)
+    
+    meme = get_job_apps()
+    print(meme)
 
-    return render_template('job.html', jobs=messages)
+    return render_template('job.html', jobs=messages , jobs2=meme)
 
 
 @app.route('/api/get_job_apps')
