@@ -60,13 +60,28 @@ def pop3_connect():
                         if c['company_name'] == newmsg['companies']:
                             cono = c['company_id']
                     insert_job(newmsg['roles'], 'https://', 1, cono)
+
+                    apps = get_job_apps()
+                    for a in apps:
+                        if a['job_title'] == newmsg['roles']:
+                            jobid = a['job_id']
+                            break
+
+    #                  ratios['Applying'] = parse_status(applying, m, 'applying')
+    # ratios['Rejection'] = parse_status(rejection, m, 'rejection')
+    # ratios['Interview'] = parse_status(interview, m, 'interview')
+    # ratios['OA'] = parse_status(oa, m, 'oa')
+    # ratios['Acceptance']
+                    stat = {'Applying': 2, 'Rejection': 7, 'Interview': 4, 'OA':6}
+                    update_job_status(jobid, stat[newmsg['ratios']])
+
                     # # messages.append(newmsg)
                     # messages.append(newmsg)
     raw_meme = get_job_apps()
     used = set()
     meme = []
     for a in raw_meme:
-        if a['job_title'] not in used:
+        if a['job_title'] not in used and a['status_text'] != 'None':
             used.add(a['job_title'])
             meme.append(a)
 
