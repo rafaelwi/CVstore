@@ -1,5 +1,5 @@
-# Hack the Job 2022
-Scott and Rafael's entry for Hack the Job 2022
+# CVstore: The ATS for Applicants
+Scott and Rafael's winning entry for Hack the Job 2022
 
 # Python Dev setup
 1. Create venv: `python3 -m venv ./env`
