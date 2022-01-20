@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Your Jobs</title>
+    <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
+  </head>
+  <body>
+    <h1>Applications</h1>
+    <table>
+      <tr>
+        <th>Status</th>
+        <th>Job</th>
+        <th>Company</th>
+        <th>Salary</th>
+      </tr>
+      {% for job in jobs %}
+      <tr>
+        <td>{{job['status_text']}}</td>
+        <td>{{job['job_title']}}</td>
+        <td>{{job['company_name']}}</td>
+        <td>{{job['salary']}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    <form action="/api/insert_company" method="post">
+      <label for="company_lbl">Company:</label>
+      <input type="text" id="comapny" name="company_name"><br><br>
+      <input type="submit" value="Submit">
+    </form>
+    <form action="/api/insert_job" method="post">
+      <label for="job_title_lbl">Job Title:</label>
+      <input type="text" id="job_title" name="job_title"><br><br>
+      <label for="application_url_lbl">Application Url:</label>
+      <input type="text" id="application_url" name="application_url"><br><br>
+      <label for="salary_lbl">Salary:</label>
+      <input type="text" id="salary" name="salary"><br><br>
+      <label for="company_id_lbl">Company Id:</label>
+      <input type="text" id="company_id" name="company_id"><br><br>
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>

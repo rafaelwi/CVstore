@@ -2,12 +2,18 @@ from string import punctuation
 from thefuzz import fuzz
 from email.parser import Parser
 
+
+# Makes the message one single line
 def smash(msg):
     return " ".join(
         [i[:-1] if i[-1] == '=' else i for i in filter(None, msg.splitlines())])
 
+
+# Parses the company, job title, and status of a job
 def parse(msg):
     m = smash(msg)
+
+    # TODO: Move these arrays into some file
     role = [
         "interest in",
         "application for",
@@ -52,23 +58,28 @@ def parse(msg):
         "congratulations"
     ]
 
-
+    # Parse job title and company
     roles = parse_data(role, m, 'roles')
     companies = parse_data(company, m, 'companies')
+
+    # Parse job status and select the highest one
+    # TODO: Use the ratios given and display to the user "we think that this
+    # is 77% an OA, can you confirm?"
     ratios = {}
-    ratios['applying'] = parse_status(applying, m, 'applying')
-    ratios['rejection'] = parse_status(rejection, m, 'rejection')
-    ratios['interview'] = parse_status(interview, m, 'interview')
-    ratios['oa'] = parse_status(oa, m, 'oa')
-    ratios['acceptance'] = parse_status(acceptance, m, 'acceptance')
-    ratios = dict(sorted(ratios.items(), key=lambda item: item[1], reverse=True))
-    obj = {'roles':roles, 'companies':companies, 'ratios':ratios, 'message':m}
+    ratios['Applying'] = parse_status(applying, m, 'applying')
+    ratios['Rejection'] = parse_status(rejection, m, 'rejection')
+    ratios['Interview'] = parse_status(interview, m, 'interview')
+    ratios['OA'] = parse_status(oa, m, 'oa')
+    ratios['Acceptance'] = parse_status(acceptance, m, 'acceptance')
+    status = max(ratios, key=ratios.get)
+
+    obj = {'roles':roles, 'companies':companies, 'ratios':status, 'message':m}
     return obj
 
 
-
+# Parse through msg with the given data arr
 def parse_data(data, msg, tag):
-    data_found = []
+    data_found = ""
     for d in data:
         idx = msg.find(d)
         if idx > -1:
@@ -80,9 +91,10 @@ def parse_data(data, msg, tag):
             # Cleanup
             new_role = new_role.replace('To', '').replace('the', '')
             new_role = new_role.strip()
-            if new_role != '': data_found.append(new_role)
+            if new_role != '': data_found += new_role + ' '
     return data_found
 
 
+# Parse job status using fuzzy matching
 def parse_status(stat, msg, tag=None):
     return sum(fuzz.partial_ratio(msg,i) for i in stat) / len(stat)
